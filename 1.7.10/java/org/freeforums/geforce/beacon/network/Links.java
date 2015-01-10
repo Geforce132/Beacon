@@ -11,7 +11,8 @@ public class Links {
 	public static void setupLinks(){
 		webLinks.put("cfm v3.4.6", "http://www.mrcrayfish.com/uploads/mods/furnituremod/MrCrayfishFurnitureModv3.4.6(1.7.10).jar");
                 webLinks.put("securitycraft v1.6.1", "http://minecraft.curseforge.com/mc-mods/64760-securitycraft-mod/files/2217735/download");
-	}
+	        webLinks.put("woodconverter v2.8", "http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar");
+        }
 	
 	public static void setupLocalMods(){}
 	
