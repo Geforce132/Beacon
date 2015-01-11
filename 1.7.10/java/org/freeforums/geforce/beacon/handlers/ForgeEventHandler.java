@@ -1,8 +1,10 @@
 package org.freeforums.geforce.beacon.handlers;
 
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent;
@@ -27,9 +29,9 @@ public class ForgeEventHandler {
 	
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onScreenDrawed(DrawScreenEvent.Post event){
+	public void onScreenDrawn(DrawScreenEvent.Post event){
 		if(event.gui instanceof GuiMultiplayer && !mod_Beacon.instance.missingMods.isEmpty()){
-			event.gui.drawString(event.gui.mc.fontRenderer, "(" + String.valueOf(mod_Beacon.instance.missingMods.size()) + " mod(s) missing!)", (event.gui.width / 2) + 45, 20, 16777215);
+			event.gui.drawString(event.gui.mc.fontRenderer, "(" + String.valueOf(mod_Beacon.instance.missingMods.size()) + " mod(s) missing!)", (event.gui.width / 2) + 45, 20, 0xFF3377);
 		}
 	}
 	
@@ -41,8 +43,10 @@ public class ForgeEventHandler {
 			if(!mod_Beacon.instance.missingMods.isEmpty()){
 				event.gui.mc.displayGuiScreen(new GuiCheckForMods(event.gui));
 			}else{
-				event.gui.mc.displayGuiScreen(new GuiMessage(event.gui, "Beacon has detected no missing mods in your Minecraft installation.", "Back"));
+				event.gui.mc.displayGuiScreen(new GuiMessage(event.gui, "Beacon has found no missing mods in your Minecraft installation.", "Back"));
 			}
+			
+			event.gui.mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
 		}
 	}
 
