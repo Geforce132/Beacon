@@ -3,7 +3,6 @@ package org.freeforums.geforce.beacon.handlers;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
@@ -13,6 +12,7 @@ import org.freeforums.geforce.beacon.gui.GuiCheckForMods;
 import org.freeforums.geforce.beacon.gui.GuiMessage;
 import org.freeforums.geforce.beacon.main.mod_Beacon;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -31,7 +31,7 @@ public class ForgeEventHandler {
 	@SideOnly(Side.CLIENT)
 	public void onScreenDrawn(DrawScreenEvent.Post event){
 		if(event.gui instanceof GuiMultiplayer && !mod_Beacon.instance.missingMods.isEmpty()){
-			event.gui.drawString(event.gui.mc.fontRenderer, "(" + String.valueOf(mod_Beacon.instance.missingMods.size()) + " mod(s) missing!)", (event.gui.width / 2) + 45, 20, 0xFF3377);
+			event.gui.drawString(event.gui.mc.fontRenderer, "(" + String.valueOf(mod_Beacon.instance.missingMods.size()) + " mod" + (mod_Beacon.instance.missingMods.size() >= 2 ? "s" : "") + " missing!)", (event.gui.width / 2) + 45, 20, 0xFF3377);
 		}
 	}
 	
@@ -49,5 +49,12 @@ public class ForgeEventHandler {
 			event.gui.mc.getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation("gui.button.press"), 1.0F));
 		}
 	}
+	
+	@SubscribeEvent
+    public void onConfigChanged(OnConfigChangedEvent event) {
+        if(event.modID.equals("beacon")){
+        	mod_Beacon.configFile.save();
+        }
+    }
 
 }

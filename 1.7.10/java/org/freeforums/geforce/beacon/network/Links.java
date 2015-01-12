@@ -1,6 +1,13 @@
 package org.freeforums.geforce.beacon.network;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 
 public class Links {
 	
@@ -8,20 +15,33 @@ public class Links {
 	public static HashMap<String, String> localMods = new HashMap<String, String>();
 	public static HashMap<String, String> modAliases = new HashMap<String, String>();
 	
-	public static void setupLinks(){
-            webLinks.put("cfm v3.4.6", "http://www.mrcrayfish.com/uploads/mods/furnituremod/MrCrayfishFurnitureModv3.4.6(1.7.10).jar");
-            webLinks.put("securitycraft v1.6.1", "http://minecraft.curseforge.com/mc-mods/64760-securitycraft-mod/files/2217735/download");
-	    webLinks.put("woodconverter v2.8", "http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar");
-            webLinks.put("transformers v0.4.4", "http://download1944.mediafire.com/arnafcccbpag/aaxacuw7i57j5p5/Transformers-1.7.10-0.4.4.zip");
-        }
-	
-	public static void setupLocalMods(){
+	public static void setupLinks() throws IOException{
+		URL modList = new URL("https://www.github.com/Geforce132/Beacon/raw/master/modList.txt");
+		BufferedReader in = new BufferedReader(new InputStreamReader(modList.openStream()));
 		
-	}
+		String line;
+		while((line = in.readLine()) != null){
+			Scanner scanner = new Scanner(line);
+			scanner.useDelimiter("~");
+			
+			List<String> modInfo = new ArrayList<String>();
+			
+			while(scanner.hasNext()){
+				modInfo.add(scanner.next());
+			}
+			
+			if(modInfo.size() == 2){ 
+				webLinks.put(modInfo.get(1), modInfo.get(2));
+			}else if(modInfo.size() == 3){ 
+				webLinks.put(modInfo.get(1), modInfo.get(2));
+				modAliases.put(modInfo.get(1), modInfo.get(3));
+			}
+		}
+    }
 	
-	public static void setupAliases(){
-		modAliases.put("cfm v3.4.6", "MrCrayfish's Furniture Mod v3.4.6");
-	}
+	public static void setupLocalMods(){}
+	
+	public static void setupAliases(){}
 	
 	public static String getLink(String mod){
 		return webLinks.get(mod);

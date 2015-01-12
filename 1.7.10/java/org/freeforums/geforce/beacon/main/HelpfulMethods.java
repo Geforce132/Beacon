@@ -5,19 +5,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.net.HttpURLConnection;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-
+import org.freeforums.geforce.beacon.gui.GuiCheckForMods;
 import org.freeforums.geforce.beacon.network.Links;
+import org.freeforums.geforce.beacon.network.ThreadDownloadFile;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -46,7 +43,7 @@ public class HelpfulMethods {
 	public static boolean hasMod(String modid, String version) {
 		for(int i = 0; i < Loader.instance().getActiveModList().size(); i++){
 			ModContainer mod = Loader.instance().getActiveModList().get(i);
-			
+						
 			if((mod.getModId() + " v" + mod.getVersion()).matches(modid + " v" + version)){
 				return true;
 			}
@@ -87,7 +84,7 @@ public class HelpfulMethods {
 		to.close();		
 	}
 	
-	public static void downloadFile(String modid, String url, String path, GuiScreen screen) throws IOException{
+	public static void downloadFile(String modid, String url, String path, GuiCheckForMods screen) throws IOException{
 		BufferedInputStream in = null;
 		FileOutputStream out = null;
 		
@@ -114,18 +111,8 @@ public class HelpfulMethods {
 			
 			in = new BufferedInputStream(website.openStream());
 			out = new FileOutputStream(path + modid + ".jar");
-			byte[] data = new byte[4094];
-			int count;
-			double sumCount = 0.0D;
 			
-			while((count = in.read(data, 0, 4094)) != -1){
-				out.write(data, 0, count);
-				sumCount += count;
-				
-				if(size > 0){
-					System.out.println("[Beacon] Downloading '" + modid + "'. " + (sumCount / size * 100.0) + "% complete.");
-				}
-			}
+			new ThreadDownloadFile(in, out, size, modid, screen).run();
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
@@ -139,28 +126,28 @@ public class HelpfulMethods {
 		}
 	}
 	
-	public static boolean downloadMod(String mod, GuiScreen screen) throws IOException {
+	public static boolean downloadMod(String mod, GuiCheckForMods screen) throws IOException {
 		if(Links.hasLocalMod(mod)){
-			transferFile(mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory + "/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/");
+			transferFile(mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("*default*") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/") : mod_Beacon.mcDirectory);
 			return true;
 		}else if(Links.hasWebLink(mod)){
-			downloadFile(mod, Links.getLink(mod), mod_Beacon.mcDirectory + "/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/", screen);
+			downloadFile(mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("*default*") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/") : mod_Beacon.mcDirectory, screen);
 			return true;
 		}	
 		
 		return false;
 	}
 
-	public static List<String> downloadMissingMods(ArrayList<String> missingMods, GuiScreen screen) {
+	public static List<String> downloadMissingMods(ArrayList<String> missingMods, GuiCheckForMods screen) {
 		List<String> downloadedMods = new ArrayList<String>();
 		
 		for(String mod : missingMods){		
 			try{
 				if(Links.hasLocalMod(mod)){
-					transferFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory + "/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/");
+					transferFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("*default*") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/") : mod_Beacon.mcDirectory);
 					downloadedMods.add(mod);
 				}else if(Links.hasWebLink(mod) && hasInternetConnection()){
-					downloadFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLink(mod), mod_Beacon.mcDirectory + "/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/", screen);
+					downloadFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("*default*") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.7.10/") : mod_Beacon.mcDirectory, screen);
 					downloadedMods.add(mod);
 				}else if(!Links.hasLocalMod(mod) && !Links.hasWebLink(mod)){
 					continue;
