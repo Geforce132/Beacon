@@ -31,22 +31,17 @@ public class Links {
 			}
 			
 			if(modInfo.size() == 2){ 
-				webLinks.put(modInfo.get(1), modInfo.get(2));
+				webLinks.put(modInfo.get(0), modInfo.get(1));
 			}else if(modInfo.size() == 3){ 
-				webLinks.put(modInfo.get(1), modInfo.get(2));
-				modAliases.put(modInfo.get(1), modInfo.get(3));
+				webLinks.put(modInfo.get(0), modInfo.get(1));
+				modAliases.put(modInfo.get(1), modInfo.get(2));
 			}
 		}
     }
 	
-	public static void setupLocalMods(){
-		localMods.put("cfm v3.4.6", "C:/Users/Cyrell/Documents/Minecraft Mods/Working 1.7.10 Mods/Forge Requiring Mods/MrCrayfish's Furniture Mod 1.7.10 v3.4.6/MrCrayfishFurnitureModv3.4.6(1.7.10).jar");
-		localMods.put("securitycraft v1.6.1", "C:/Users/Cyrell/Documents/Minecraft Mods/My Mods~Requires Forge~1.7.10/SecurityCraft v1.6.0 for 1.7.10.jar");
-	}
+	public static void setupLocalMods(){}
 	
-	public static void setupAliases(){
-		modAliases.put("cfm v3.4.6", "MrCrayfish's Furniture Mod v3.4.6");
-	}
+	public static void setupAliases(){}
 	
 	public static String getLink(String mod){
 		return webLinks.get(mod);

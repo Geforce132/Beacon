@@ -11,17 +11,16 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiSlot;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
+import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import org.freeforums.geforce.beacon.main.HelpfulMethods;
 import org.freeforums.geforce.beacon.main.mod_Beacon;
 import org.freeforums.geforce.beacon.network.Links;
 
 import com.google.common.collect.Lists;
-
-import cpw.mods.fml.client.config.GuiUnicodeGlyphButton;
-import cpw.mods.fml.client.config.GuiUtils;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class GuiCheckForMods extends GuiScreen {
 	
@@ -43,7 +42,7 @@ public class GuiCheckForMods extends GuiScreen {
 		this.missingModsList = new GuiCheckForMods.List();
         this.missingModsList.registerScrollButtons(7, 8);
         
-		this.buttonList.add(new GuiUnicodeGlyphButton(0, 20, this.height - 25, 130, 20, "  Download all mods", "\u21A1\u21A1", 2.0F));
+		this.buttonList.add(new GuiUnicodeGlyphButton(0, 20, this.height - 25, 130, 20, "  Download all mods", "\u21A1\u21A1", 2.0F)); //21A7
 		this.buttonList.add(new GuiUnicodeGlyphButton(1, this.width - 60, this.height - 25, 40, 20, "Back", GuiUtils.UNDO_CHAR, 2.0F));
 		this.buttonList.add(new GuiUnicodeGlyphButton(2, 20, this.height - 55, 100, 20, "  Download mod", "\u21D9", 2.5F));
 		
@@ -77,6 +76,12 @@ public class GuiCheckForMods extends GuiScreen {
         
         Minecraft.getMinecraft().displayGuiScreen(new GuiRestart());
         
+    }
+	
+	public void handleMouseInput() throws IOException
+    {
+        super.handleMouseInput();
+        this.missingModsList.handleMouseInput();
     }
 	
 	protected void actionPerformed(GuiButton par1){
@@ -129,7 +134,7 @@ public class GuiCheckForMods extends GuiScreen {
     class List extends GuiSlot
     {
         private final java.util.List list = Lists.newArrayList();
-        public final Map<Integer, String> numberToLink = new HashMap<Integer, String>();
+        private final Map<Integer, String> numberToLink = new HashMap<Integer, String>();
         private final Map<Integer, String> downloadType = new HashMap<Integer, String>();
 
         protected int selectedEntry = -1;
@@ -170,7 +175,7 @@ public class GuiCheckForMods extends GuiScreen {
         protected void elementClicked(int par1, boolean p_148144_2_, int p_148144_3_, int p_148144_4_)
         {
         	this.selectedEntry = par1;
-        	
+
         	if(this.downloadType.get(par1).matches("local")){
         		((GuiUnicodeGlyphButton) GuiCheckForMods.this.buttonList.get(2)).displayString = " Transfer mod";
         		((GuiUnicodeGlyphButton) GuiCheckForMods.this.buttonList.get(2)).glyph = "\u21C4";
@@ -209,7 +214,7 @@ public class GuiCheckForMods extends GuiScreen {
         	GuiCheckForMods.this.drawDefaultBackground();
         }
 
-        protected void drawSlot(int par1, int p_148126_2_, int p_148126_3_, int p_148126_4_, Tessellator p_148126_5_, int p_148126_6_, int p_148126_7_)
+        protected void drawSlot(int par1, int p_148126_2_, int p_148126_3_, int p_148126_4_, int p_148126_5_, int p_148126_6_)
         {
         	if(this.downloadType.get(par1).matches("none")){
         		GuiCheckForMods.this.drawCenteredString(GuiCheckForMods.this.fontRendererObj, this.list.get(par1).toString(), this.width / 2, p_148126_3_ + 1, 0xFF3377); 
