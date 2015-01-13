@@ -1,3 +1,4 @@
 securitycraft v1.6.1~http://minecraft.curseforge.com/mc-mods/64760-securitycraft-mod/files/2217735/download
 woodconverter v2.8~http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar
 transformers v0.4.4~http://download1944.mediafire.com/arnafcccbpag/aaxacuw7i57j5p5/Transformers-1.7.10-0.4.4.zip
+GranterMod v1.2~http://minecraft.curseforge.com/mc-mods/225886-granter/files/2221222/download
