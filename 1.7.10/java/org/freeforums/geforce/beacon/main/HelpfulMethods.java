@@ -46,7 +46,7 @@ public class HelpfulMethods {
 		for(int i = 0; i < Loader.instance().getActiveModList().size(); i++){
 			ModContainer mod = Loader.instance().getActiveModList().get(i);
 						
-			if((mod.getModId() + " v" + mod.getVersion()).matches(modid + " v" + version)){
+			if((mod.getModId() + mod.getVersion().replaceFirst("v", "")).matches(modid + version)){
 				return true;
 			}
 		}
