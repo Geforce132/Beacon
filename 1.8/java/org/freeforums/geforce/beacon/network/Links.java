@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
+import org.freeforums.geforce.beacon.main.mod_Beacon;
+
 public class Links {
 	
 	public static HashMap<String, String> webLinks = new HashMap<String, String>();
@@ -29,12 +31,18 @@ public class Links {
 			while(scanner.hasNext()){
 				modInfo.add(scanner.next());
 			}
+            
+            if(modInfo.size() == 3 && !modInfo.get(1).matches(mod_Beacon.MCVERSION)){
+				continue;
+			}else if(modInfo.size() == 4 && !modInfo.get(2).matches(mod_Beacon.MCVERSION)){
+				continue;
+			}
 			
-			if(modInfo.size() == 2){ 
-				webLinks.put(modInfo.get(0), modInfo.get(1));
-			}else if(modInfo.size() == 3){ 
-				webLinks.put(modInfo.get(0), modInfo.get(1));
-				modAliases.put(modInfo.get(1), modInfo.get(2));
+			if(modInfo.size() == 3){ 
+				webLinks.put(modInfo.get(0), modInfo.get(2));
+			}else if(modInfo.size() == 4){ 
+				webLinks.put(modInfo.get(0), modInfo.get(3));
+				modAliases.put(modInfo.get(0), modInfo.get(3));
 			}
 		}
     }

@@ -33,7 +33,8 @@ public class mod_Beacon {
 	//TODO ********************************* This is v1.0.0 for MC 1.8!
 	protected static final String VERSION = "v1.0.0";
 	protected static final String FORGEVERSION = "required-after:Forge@[11.14.0.1252,)";
-	
+	public static final String MCVERSION = "1.8";
+    
 	@Instance("beacon")
 	public static mod_Beacon instance = new mod_Beacon();
 	
