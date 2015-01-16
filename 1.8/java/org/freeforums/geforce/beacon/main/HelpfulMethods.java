@@ -129,10 +129,10 @@ public class HelpfulMethods {
 	
 	public static boolean downloadMod(String mod, GuiCheckForMods screen) throws IOException {
 		if(Links.hasLocalMod(mod)){
-			transferFile(mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/" + Minecraft.getMinecraft().getVersion() + "/") : mod_Beacon.mcDirectory);
+			transferFile(mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.8/") : mod_Beacon.mcDirectory);
 			return true;
 		}else if(Links.hasWebLink(mod)){
-			downloadFile(mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/" + Minecraft.getMinecraft().getVersion() + "/") : mod_Beacon.mcDirectory, screen);
+			downloadFile(mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.8/") : mod_Beacon.mcDirectory, screen);
 			return true;
 		}	
 		
@@ -145,10 +145,10 @@ public class HelpfulMethods {
 		for(String mod : missingMods){		
 			try{
 				if(Links.hasLocalMod(mod)){
-					transferFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/" + Minecraft.getMinecraft().getVersion() + "/") : mod_Beacon.mcDirectory + "mods/" + Minecraft.getMinecraft().getVersion() + "/");
+					transferFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLocalModPath(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.8/") : mod_Beacon.mcDirectory + "mods/1.8/");
 					downloadedMods.add(mod);
 				}else if(Links.hasWebLink(mod) && hasInternetConnection()){
-					downloadFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/" + Minecraft.getMinecraft().getVersion() + "/") : mod_Beacon.mcDirectory + "mods/" + Minecraft.getMinecraft().getVersion() + "/", screen);
+					downloadFile(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.8/") : mod_Beacon.mcDirectory + "mods/1.8/", screen);
 					downloadedMods.add(mod);
 				}else if(!Links.hasLocalMod(mod) && !Links.hasWebLink(mod)){
 					continue;

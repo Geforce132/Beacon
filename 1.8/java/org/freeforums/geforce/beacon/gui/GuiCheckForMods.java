@@ -29,7 +29,8 @@ public class GuiCheckForMods extends GuiScreen {
 	private ArrayList<String> modsToRemove = new ArrayList<String>();
 	private boolean hasDownloadedMod;
 	private boolean downloadedAllMods = false;
-	
+	private boolean hasInternetConnection = true;
+
 	public HashMap<String, Integer> downloads = new HashMap<String, Integer>();
 	
 	public GuiCheckForMods(GuiScreen par1){
@@ -38,6 +39,8 @@ public class GuiCheckForMods extends GuiScreen {
 	
 	public void initGui(){
 		super.initGui();
+        
+        this.hasInternetConnection = HelpfulMethods.hasInternetConnection();
 		
 		this.missingModsList = new GuiCheckForMods.List();
         this.missingModsList.registerScrollButtons(7, 8);
@@ -56,7 +59,7 @@ public class GuiCheckForMods extends GuiScreen {
 		
 		this.drawCenteredString(fontRendererObj, "Beacon", this.width / 2, 20, 16777215);
 		
-		if(!HelpfulMethods.hasInternetConnection()){
+		if(!hasInternetConnection){
 			this.drawString(fontRendererObj, "No internet connection detected!", 12, 5, 0xFF3377);
 			this.drawString(fontRendererObj, "Downloads are disabled.", 37, 20, 0xFF3377);
 		}

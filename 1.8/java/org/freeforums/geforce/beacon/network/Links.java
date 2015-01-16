@@ -31,8 +31,8 @@ public class Links {
 			while(scanner.hasNext()){
 				modInfo.add(scanner.next());
 			}
-            
-            if(modInfo.size() == 3 && !modInfo.get(1).matches(mod_Beacon.MCVERSION)){
+			
+			if(modInfo.size() == 3 && !modInfo.get(1).matches(mod_Beacon.MCVERSION)){
 				continue;
 			}else if(modInfo.size() == 4 && !modInfo.get(2).matches(mod_Beacon.MCVERSION)){
 				continue;
