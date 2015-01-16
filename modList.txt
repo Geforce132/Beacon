@@ -2,3 +2,6 @@ securitycraft v1.6.1~1.7.10~http://minecraft.curseforge.com/mc-mods/64760-securi
 woodconverter v2.8~1.7.10~http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar
 transformers v0.4.4~1.7.10~http://download1944.mediafire.com/arnafcccbpag/aaxacuw7i57j5p5/Transformers-1.7.10-0.4.4.zip
 GranterMod v1.2~1.7.10~http://minecraft.curseforge.com/mc-mods/225886-granter/files/2221222/download
+planetguyLib v1.3~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/PlanetguyLib-1.3.jar
+planetguy_Gizmos v3.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/Gizmos-3.2.jar
+JAKJ_RedstoneInMotion v2.4.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/RemainInMotion-2.4.0.jar
