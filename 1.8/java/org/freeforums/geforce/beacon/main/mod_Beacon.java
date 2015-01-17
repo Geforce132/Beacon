@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -31,7 +30,7 @@ public class mod_Beacon {
 	private static final String MOTU = "First!";
 	
 	//TODO ********************************* This is v1.0.0 for MC 1.8!
-	protected static final String VERSION = "v1.0.4";
+	protected static final String VERSION = "v1.0.5";
 	protected static final String FORGEVERSION = "required-after:Forge@[11.14.0.1252,)";
         public static final String MCVERSION = "1.8";
 	
@@ -93,6 +92,7 @@ public class mod_Beacon {
 			String version = (String) modList.values().toArray()[i];
 			
 			if(version.toLowerCase().startsWith("v")){ version = version.replaceFirst("v", ""); }
+			if(modList.containsKey("Forge") && !HelpfulMethods.getVersionOfForge(modList.get("Forge")).matches(MCVERSION)){ continue; }
 			if(modid.matches("mcp") || modid.matches("FML") || modid.matches("Forge")){ continue; }
 			if(instance.missingMods.contains(modid + " v" + version)){ continue; }
 			if(instance.addedMods.contains(modid + " v" + version)){ continue; }

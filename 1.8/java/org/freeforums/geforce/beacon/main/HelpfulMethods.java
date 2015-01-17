@@ -12,7 +12,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -51,6 +50,20 @@ public class HelpfulMethods {
 		}
 		
 		return false;
+	}
+	
+	public static String getVersionOfForge(String version) {
+		if(version.startsWith("9.11")){
+			return "1.6.2/1.6.4";
+		}else if(version.startsWith("10.12")){
+			return "1.7.2";
+		}else if(version.startsWith("10.13")){
+			return "1.7.10";
+		}else if(version.startsWith("10.14")){
+			return "1.8";
+		}else{
+			return "unknown";
+		}
 	}
 	
 	public static void transferFile(String modName, String transferFrom, String transferTo) throws IOException{
