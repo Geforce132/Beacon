@@ -1,8 +1,15 @@
-securitycraft v1.6.1~1.7.10~http://minecraft.curseforge.com/mc-mods/64760-securitycraft-mod/files/2217735/download
-teleportals v0.6~1.7.2~http://minecraft.curseforge.com/mc-mods/220892-teleportals/files/2208468/download
-woodconverter v2.8~1.7.10~http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar
-transformers v0.4.4~1.7.10~http://download1944.mediafire.com/arnafcccbpag/aaxacuw7i57j5p5/Transformers-1.7.10-0.4.4.zip
 GranterMod v1.2~1.7.10~http://minecraft.curseforge.com/mc-mods/225886-granter/files/2221222/download
+JAKJ_RedstoneInMotion v2.4.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/RemainInMotion-2.4.0.jar
 planetguyLib v1.3~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/PlanetguyLib-1.3.jar
 planetguy_Gizmos v3.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/Gizmos-3.2.jar
-JAKJ_RedstoneInMotion v2.4.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/RemainInMotion-2.4.0.jar
+securitycraft v1.6.1~1.7.10~http://minecraft.curseforge.com/mc-mods/64760-securitycraft-mod/files/2217735/download
+shaderkey v1.0~1.7.10~http://download1626.mediafire.com/rvi5lwigp4fg/h79qv2k5se1h853/%5B1.7.10%5DShaderKey+v1.0.jar~Shader Key
+shaderkey v1.0~1.8~http://download1123.mediafire.com/63d209713kwg/n4bpa147z3l3e66/%5B1.8%5DShaderKey+v1.0.jar~Shader Key
+teleportals v0.6~1.7.2~http://minecraft.curseforge.com/mc-mods/220892-teleportals/files/2208468/download
+transformers v0.4.4~1.7.10~http://download1944.mediafire.com/arnafcccbpag/aaxacuw7i57j5p5/Transformers-1.7.10-0.4.4.zip
+woodconverter v2.7_1~1.7.10~http://download1029.mediafire.com/p8kpx2p709xg/p2v85t44mleovat/%5B1.7.10%5DWood+Converter+v2.7_1.jar~Wood Converter
+woodconverter v2.8~1.7.10~http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar
+
+
+
+
