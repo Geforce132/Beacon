@@ -1,4 +1,6 @@
 GranterMod v1.2~1.7.10~http://minecraft.curseforge.com/mc-mods/225886-granter/files/2221222/download
+glass_shards 0.4-alpha~1.7.10~http://minecraft.curseforge.com/mc-mods/226834-glass-shards/files/2225216/download~Glass Shards
+glass_shards 0.4-alpha~1.8~http://minecraft.curseforge.com/mc-mods/226834-glass-shards/files/2225217/download~Glass Shards
 JAKJ_RedstoneInMotion v2.4.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/RemainInMotion-2.4.0.jar
 planetguyLib v1.3~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/PlanetguyLib-1.3.jar
 planetguy_Gizmos v3.0~1.7.10~https://dl.dropboxusercontent.com/u/90514502/directLinks/Gizmos-3.2.jar
