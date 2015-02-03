@@ -1,18 +1,12 @@
 package org.freeforums.geforce.beacon.main;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 
-import org.freeforums.geforce.beacon.handlers.ForgeEventHandler;
-import org.freeforums.geforce.beacon.network.ConfigurationHandler;
-import org.freeforums.geforce.beacon.network.Links;
+import org.freeforums.geforce.beacon.Beacon;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -38,33 +32,11 @@ public class mod_Beacon {
 	@Instance("beacon")
 	public static mod_Beacon instance = new mod_Beacon();
 	
-	public static ForgeEventHandler eventHandler = new ForgeEventHandler();
-	public static ConfigurationHandler configHandler = new ConfigurationHandler();
-			
-	public ArrayList<String> missingMods = new ArrayList<String>();
-	public ArrayList<String> addedMods = new ArrayList<String>();
-
-	public static Configuration configFile;
-	public static String mcDirectory;
-	
-	
+	public static Beacon beacon;
+		
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		mod_Beacon.configFile = new Configuration(event.getSuggestedConfigurationFile());
-
-		this.configHandler.loadConfig(configFile);
-		
-		try{
-			Links.setupLinks();	
-		}catch(IOException e){
-			e.printStackTrace();
-			System.out.println("*** [Beacon] Beacon has encountered a problem while attempting to download the latest modlist from www.github.com. ***");
-		}
-		
-		Links.setupLocalMods();
-		Links.setupAliases();
-		
-		FMLCommonHandler.instance().bus().register(mod_Beacon.eventHandler);
+		beacon = new Beacon(MODID, VERSION, "", MCVERSION);
 		
 		ModMetadata modMeta = event.getModMetadata();
         modMeta.authorList = Arrays.asList(new String[] {
@@ -83,28 +55,12 @@ public class mod_Beacon {
 	
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
-		MinecraftForge.EVENT_BUS.register(mod_Beacon.eventHandler);
+		beacon.registerBeaconEventHandler();
 	}
 	
 	@NetworkCheckHandler
 	public boolean onConnectionReceived(Map<String,String> modList, Side side){
-		
-		for(int i = 0; i < modList.size(); i++){
-			String modid = (String) modList.keySet().toArray()[i];
-			String version = (String) modList.values().toArray()[i];
-			
-			if(version.toLowerCase().startsWith("v")){ version = version.replaceFirst("v", ""); }
-			if(modList.containsKey("Forge") && !HelpfulMethods.getVersionOfForge(modList.get("Forge")).matches(MCVERSION)){ continue; }
-            if(modid.matches("mcp") || modid.matches("FML") || modid.matches("Forge")){ continue; }
-			if(instance.missingMods.contains(modid + " v" + version)){ continue; }
-			if(instance.addedMods.contains(modid + " v" + version)){ continue; }
-			if(HelpfulMethods.hasMod(modid, version)){ continue; }
-			
-			
-			instance.missingMods.add((modid + " v" + version));
-		}
-		
-		return true;
+		return beacon.onConnectionReceived(modList, side);
 	}
 
 }

@@ -31,7 +31,7 @@ public class Links {
 			while(scanner.hasNext()){
 				modInfo.add(scanner.next());
 			}
-			
+	
 			if(modInfo.size() == 3 && !modInfo.get(1).matches(mod_Beacon.MCVERSION)){
 				continue;
 			}else if(modInfo.size() == 4 && !modInfo.get(2).matches(mod_Beacon.MCVERSION)){
@@ -41,8 +41,9 @@ public class Links {
 			if(modInfo.size() == 3){ 
 				webLinks.put(modInfo.get(0), modInfo.get(2));
 			}else if(modInfo.size() == 4){ 
-				webLinks.put(modInfo.get(0), modInfo.get(2));
-				modAliases.put(modInfo.get(0), modInfo.get(3));
+
+			webLinks.put(modInfo.get(0), modInfo.get(3));
+			modAliases.put(modInfo.get(0), modInfo.get(1));
 			}
 		}
     }

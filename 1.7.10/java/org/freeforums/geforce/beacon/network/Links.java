@@ -41,8 +41,10 @@ public class Links {
 			if(modInfo.size() == 3){ 
 				webLinks.put(modInfo.get(0), modInfo.get(2));
 			}else if(modInfo.size() == 4){ 
-				webLinks.put(modInfo.get(0), modInfo.get(2));
-				modAliases.put(modInfo.get(0), modInfo.get(3));
+
+				webLinks.put(modInfo.get(0), modInfo.get(3));
+				modAliases.put(modInfo.get(0), modInfo.get(1));
+
 			}
 		}
     }

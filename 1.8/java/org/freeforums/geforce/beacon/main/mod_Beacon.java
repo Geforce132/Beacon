@@ -29,8 +29,8 @@ public class mod_Beacon {
 	public static final String NAME = "Beacon";
 	private static final String MOTU = "First!";
 	
-	//TODO ********************************* This is v1.0.0 for MC 1.8!
-	protected static final String VERSION = "v1.0.5";
+	//TODO ********************************* This is v1.0.6 for MC 1.8!
+	protected static final String VERSION = "v1.0.6";
 	protected static final String FORGEVERSION = "required-after:Forge@[11.14.0.1252,)";
         public static final String MCVERSION = "1.8";
 	
