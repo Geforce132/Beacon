@@ -76,7 +76,6 @@ public class mod_Beacon {
         modMeta.url = "http://www.github.com/Geforce132/Beacon";
         
         FMLInterModComms.sendMessage("beacon", "add-incompatibility", "securitycraft 1.7.2");
-        FMLInterModComms.sendMessage("beacon", "add-url", "beacon C:/Users/Cyrell/Desktop/CFPage.htm");
 	}
 		
 	

@@ -2,7 +2,6 @@ package org.freeforums.geforce.beacon.main;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -10,20 +9,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-import net.minecraft.command.WrongUsageException;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import org.freeforums.geforce.beacon.gui.GuiCheckForMods;
+import org.freeforums.geforce.beacon.gui.ModUpdateListEntry;
 import org.freeforums.geforce.beacon.jsoup.Element;
-import org.freeforums.geforce.beacon.misc.ModNamingFormat;
-import org.freeforums.geforce.beacon.network.Links;
 import org.freeforums.geforce.beacon.network.ThreadDownloadFile;
+import org.freeforums.geforce.beacon.network.ThreadDownloadFileFromURL;
 
 public class HelpfulMethods {
 	
@@ -74,17 +70,6 @@ public class HelpfulMethods {
 	
 	public static URL getCurseForgeDLLink(String modid) throws MalformedURLException{
 		return new URL("http://minecraft.curseforge.com/mc-mods/" + modid + "/files");
-	}
-	
-	public static Object[] formatCFLink(String link, String modname){
-		for(ModNamingFormat format : ModNamingFormat.getNamingFormats()){
-			Object[] info = format.formatLink(link, modname);
-			if(info != null){
-				return info;
-			}
-		}
-		
-		return null;
 	}
 	
 	public static Element getDownloadLinkFromElement(List<Element> elements, String rawDLLink){
@@ -176,35 +161,11 @@ public class HelpfulMethods {
 		}
 	}
 	
-	public static boolean downloadMod(String mod, GuiCheckForMods screen) throws IOException {
-		if(Links.hasWebLink(mod)){
-			//downloadFile(mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/1.8/") : mod_Beacon.mcDirectory, screen);
-			return true;
-		}	
+	public static void downloadMod(ModUpdateListEntry entry){
+		ThreadDownloadFileFromURL downloadThread = new ThreadDownloadFileFromURL(entry);
 		
-		return false;
-	}
-
-	public static List<String> downloadMissingMods(ArrayList<String> missingMods, GuiCheckForMods screen) {
-		List<String> downloadedMods = new ArrayList<String>();
-		
-//		for(String mod : missingMods){		
-//			try{
-//				if(Links.hasWebLink(mod) && hasInternetConnection()){
-//					downloadMod(Links.hasAlias(mod) ? Links.getAlias(mod) : mod, Links.getLink(mod), mod_Beacon.mcDirectory.matches("default") ? ("C:/Users/" + System.getProperty("user.name") + "/AppData/Roaming/.minecraft/mods/" + Loader.MC_VERSION + "/") : mod_Beacon.mcDirectory + "mods/" + Loader.MC_VERSION + "/", screen);
-//					downloadedMods.add(mod);
-//				}else if(!Links.hasWebLink(mod)){
-//					continue;
-//				}	
-//			}catch(IOException e){
-//				e.printStackTrace();
-//				System.out.println("[Beacon] Catching exception while downloading the '" + mod + "' mod.");
-//				continue;
-//			}	
-//			
-//		}
-		
-		return downloadedMods;
+		Thread thread = new Thread(downloadThread);
+		thread.start();
 	}
 
 }

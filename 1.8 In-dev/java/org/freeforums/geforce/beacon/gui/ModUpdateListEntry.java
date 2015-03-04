@@ -1,5 +1,6 @@
 package org.freeforums.geforce.beacon.gui;
 
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -7,6 +8,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiListExtended.IGuiListEntry;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -22,26 +24,40 @@ public class ModUpdateListEntry implements IGuiListEntry{
     private GuiCheckForMods updateScreen;
     private ModTypes releaseType;
     
+    private String modid;
     private String modName;
     private String modVersion;
-	
-	public ModUpdateListEntry(String modName, String modVersion, ModTypes releaseType, GuiCheckForMods updateScreen, Minecraft mc){
+    private String downloadLink;
+    
+    public ModUpdateListEntry(String modid, String modName, String modVersion, String downloadLink, ModTypes releaseType, GuiCheckForMods updateScreen, Minecraft mc){
+		this.modid = modid;
 		this.modName = modName;
 		this.modVersion = modVersion;
+		this.downloadLink = downloadLink;
+		this.updateScreen = updateScreen;
+		this.releaseType = releaseType;
+		this.mc = mc;
+	}
+	
+	public ModUpdateListEntry(ModContainer mod, String downloadLink, ModTypes releaseType, GuiCheckForMods updateScreen, Minecraft mc){
+		this.modid = mod.getModId();
+		this.modName = mod.getName();
+		this.modVersion = mod.getVersion();
+		this.downloadLink = downloadLink;
 		this.updateScreen = updateScreen;
 		this.releaseType = releaseType;
 		this.mc = mc;
 	}
 
 	public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-        if(this.releaseType == ModTypes.RELEASE){
-            this.mc.getTextureManager().bindTexture(this.releasePng);
-        }else if(this.releaseType == ModTypes.BETA){
-            this.mc.getTextureManager().bindTexture(this.betaPng);
-        }if(this.releaseType == ModTypes.ALPHA){
-            this.mc.getTextureManager().bindTexture(this.alphaPng);
-        }
-        
+		if(this.releaseType == ModTypes.RELEASE){
+			this.mc.getTextureManager().bindTexture(this.releasePng);
+		}else if(this.releaseType == ModTypes.BETA){
+			this.mc.getTextureManager().bindTexture(this.betaPng);
+		}else if(this.releaseType == ModTypes.ALPHA){
+			this.mc.getTextureManager().bindTexture(this.alphaPng);
+		}
+		 
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, 32, 32, 32.0F, 32.0F);
         int i2;
@@ -122,12 +138,16 @@ public class ModUpdateListEntry implements IGuiListEntry{
         }
 	}
 
-	protected String getEntryMetadata() {
+	public String getEntryMetadata() {
 		return modVersion;
 	}
 
-	protected String getEntryName() {
+	public String getEntryName() {
 		return modName;
+	}
+	
+	public String getDownloadLink(){
+		return downloadLink;
 	}
 	
 	protected boolean func_148309_e()
@@ -155,6 +175,7 @@ public class ModUpdateListEntry implements IGuiListEntry{
     }
 	
 	public boolean mousePressed(int par1, int par2, int par3, int par4, int par5, int par6) {
+		System.out.println(par5);
 		if (par5 <= 32)
         {
             if (this.func_148309_e())

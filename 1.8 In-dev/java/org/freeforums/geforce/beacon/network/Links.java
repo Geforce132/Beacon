@@ -14,9 +14,7 @@ import net.minecraftforge.fml.common.Loader;
 import org.freeforums.geforce.beacon.main.mod_Beacon;
 
 public class Links {
-	
-	public static HashMap<String, String> webLinks = new HashMap<String, String>();
-	
+		
 	public static void setupLinks() throws IOException{
 		URL modList = new URL("https://www.github.com/Geforce132/Beacon/raw/master/modList.txt");
 		BufferedReader in = new BufferedReader(new InputStreamReader(modList.openStream()));
@@ -33,17 +31,9 @@ public class Links {
 			}
 	
 			if(modInfo.size() == 2){ 
-				webLinks.put(modInfo.get(0), modInfo.get(1));
+				mod_Beacon.instance.beacon.modUrls.put(modInfo.get(0), modInfo.get(1));
 			}
 		}
-    }
-			
-	public static String getLink(String mod){
-		return webLinks.get(mod);
-	}
-
-	public static boolean hasWebLink(String mod){
-		return webLinks.containsKey(mod);
 	}
 	
 }

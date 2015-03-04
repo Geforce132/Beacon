@@ -19,6 +19,7 @@ import org.freeforums.geforce.beacon.jsoup.Jsoup;
 import org.freeforums.geforce.beacon.main.HelpfulMethods;
 import org.freeforums.geforce.beacon.main.mod_Beacon;
 import org.freeforums.geforce.beacon.misc.DownloadInfo;
+import org.freeforums.geforce.beacon.misc.ModNamingFormat;
 
 import com.google.common.collect.Lists;
 
@@ -39,49 +40,47 @@ public class GuiCheckForMods extends GuiScreen {
 	
 	public void initGui(){
 		super.initGui();
-
+		
+    	List<DownloadInfo> modDownloadLinks = new ArrayList<DownloadInfo>();
         for(ModContainer modInstalled : mod_Beacon.instance.beacon.getModsCompatibleWithBeacon()){
+
         	try{
-	        	File file = new File(new Scanner(mod_Beacon.instance.beacon.getURLForMod(modInstalled)).nextLine());
+	        	File file = new File(mod_Beacon.instance.beacon.getURLForMod(modInstalled));
 	    		Document doc = Jsoup.parse(file, null);
 	    		List<Element> resultLinks = doc.select("a");
 	    		
-    	    	List<DownloadInfo> modDownloadLinks = new ArrayList<DownloadInfo>();
 
 	    	    for(Element link : resultLinks){
 	    	    	String href = link.attr("href");
 	    	    	if(href.endsWith("/download")){
 	    	    		Element element = HelpfulMethods.getDownloadLinkFromElement(resultLinks, link.attr("href"));
 	    	    		if(element != null){
-		    	    		modDownloadLinks.add(new DownloadInfo(element.text(), href));
+		    	    		modDownloadLinks.add(new DownloadInfo(modInstalled, element.text(), href));
 	    	    		}
 	    	    	}else{
 	    	    		continue;
 	    	    	}
 	    	    }
-	    	    	
-	    	    for(DownloadInfo link : modDownloadLinks){
-	    	    	Object[] info = HelpfulMethods.formatCFLink(link.modLinkName, "SecurityCraft");
-	    	    	if(info != null && ((String) info[2]).matches(Loader.MC_VERSION) && HelpfulMethods.compareVersions(modInstalled.getDisplayVersion().replaceFirst("v", ""), (String) info[1]) == -1){
-	    	    		this.updatesAvaliableList.add(new ModUpdateListEntry((String) info[0], modInstalled.getDisplayVersion().replaceFirst("v", "") + " -> " + info[3] + info[1], ((String) info[2]).matches("a") ? ModUpdateListEntry.ModTypes.ALPHA : ((String) info[2]).matches("b") ? ModUpdateListEntry.ModTypes.BETA : ModUpdateListEntry.ModTypes.RELEASE, this, mc));
-	    	    	}
-	    	    }
         	}catch(IOException e){
         		e.printStackTrace();
-        	}
-        	
-        	this.updatesAvaliableList.add(new ModUpdateListEntry(modInstalled.getName(), modInstalled.getVersion(), ModUpdateListEntry.ModTypes.BETA, this, mc));
+        	}       		
         }
         
-        //this.updatesAvaliableList.add(new ModUpdateListEntry("SecurityCraft", "v1.7.2", this, mc));
-        //this.updatesSelectedList.add(new ModUpdateListEntry("Teleportals", "v1.4", this, mc));
-
+        for(DownloadInfo link : modDownloadLinks){
+	    	Object[] info = ModNamingFormat.formatCFLink(link.modLinkName, link.mod.getName()); //TODO ModName
+	    	if(info != null && ((String) info[2]).matches(Loader.MC_VERSION)){
+	    		this.updatesAvaliableList.add(new ModUpdateListEntry(link.mod.getModId(), (String) info[0], link.mod.getVersion() + " -> " + "v" + info[1] + info[3], link.downloadLink, ((String) info[2]).matches("a") ? ModUpdateListEntry.ModTypes.ALPHA : ((String) info[2]).matches("b") ? ModUpdateListEntry.ModTypes.BETA : ModUpdateListEntry.ModTypes.RELEASE, this, mc));
+	    	}
+	    }
+    	
+    	this.updatesAvaliableList.add(new ModUpdateListEntry("beacon", "Beacon", "v1.0.5", "test", ModUpdateListEntry.ModTypes.BETA, this, mc));
+        
         this.guiUpdatesAvaliableList = new GuiUpdatesAvailableList(this.mc, 200, this.height, this.updatesAvaliableList);
         this.guiUpdatesAvaliableList.setSlotXBoundsFromLeft(this.width / 2 - 4 - 200);
         this.guiUpdatesAvaliableList.registerScrollButtons(7, 8);
         this.guiUpdatesSelectedList = new GuiUpdatesSelectedList(this.mc, 200, this.height, this.updatesSelectedList);
         this.guiUpdatesSelectedList.setSlotXBoundsFromLeft(this.width / 2 + 4);
-        this.guiUpdatesSelectedList.registerScrollButtons(7, 8);
+        this.guiUpdatesSelectedList.registerScrollButtons(9, 10);
         
         this.buttonList.add(new GuiUnicodeGlyphButton(0, 20, this.height - 25, 130, 20, "  Download mods", "\u21A1\u21A1", 2.0F)); //21A7
 		this.buttonList.add(new GuiUnicodeGlyphButton(1, this.width - 60, this.height - 25, 40, 20, "Back", GuiUtils.UNDO_CHAR, 2.0F));
@@ -116,36 +115,11 @@ public class GuiCheckForMods extends GuiScreen {
 	protected void actionPerformed(GuiButton par1){
 		if(par1.id == 0){		
 			for(ModUpdateListEntry entry : updatesSelectedList){
-				System.out.println(entry.getEntryName() + " | " + entry.getEntryMetadata());
+				System.out.println(entry.getEntryName() + " | " + entry.getEntryMetadata() + " | " + entry.getDownloadLink());
+				HelpfulMethods.downloadMod(entry);
 			}
-			
-			
-			//List<String> downloadedMods = HelpfulMethods.downloadMissingMods(mod_Beacon.instance.missingMods, this);
-			
-			//for(int i = 0; i < downloadedMods.size(); i++){
-			//	mod_Beacon.instance.addedMods.add(downloadedMods.get(i));
-			//	modsToRemove.add(downloadedMods.get(i));
-			//}
-			
-			//downloadedAllMods = true;
-			//par1.enabled = false;
 		}else if(par1.id == 1){
-			//if(hasDownloadedMod || downloadedAllMods){
-			//	this.closeGui();
-			//}else{
-				this.mc.displayGuiScreen(prevScreen);
-			//}
-		}else if(par1.id == 2){
-			//try{
-				//if(HelpfulMethods.downloadMod(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry), this)){
-				//	modsToRemove.add(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry));
-				//	mod_Beacon.instance.addedMods.add(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry));
-				//	par1.enabled = false;
-				//	hasDownloadedMod = true;
-				//}
-			//}catch(IOException e){
-			//	e.printStackTrace();
-			//}
+			this.mc.displayGuiScreen(prevScreen);
 		}
 	}
 	
