@@ -32,15 +32,9 @@ public class ThreadDownloadFile implements Runnable {
 				out.write(data, 0, count);
 				sumCount += count;
 				
-				if(fileSize > 0 && screen != null){
-					screen.setModDownloading(modid, (sumCount / fileSize * 100.0));
-				}else if(fileSize > 0 && screen == null){
+				if(fileSize > 0){
 					System.out.println("[Beacon] Downloading '" + modid + "'. " + (sumCount / fileSize * 100.0) + "% complete.");
 				}
-			}
-			
-			if(screen.downloads.containsKey(modid)){
-				screen.downloads.remove(modid);
 			}
 		}catch(IOException e){
 			e.printStackTrace();

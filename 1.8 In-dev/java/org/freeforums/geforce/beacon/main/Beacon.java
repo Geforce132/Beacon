@@ -3,10 +3,13 @@ package org.freeforums.geforce.beacon.main;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -56,10 +59,14 @@ public class Beacon {
 	
 	private boolean hasDownloadMod = false;
 	
+	public ArrayList<String> modIncompatibilities = new ArrayList<String>();
+	public HashMap<String, String> modUrls = new HashMap<String, String>();
+	
 	public List<String> validKeys = new ArrayList<String>();
 	
 	public Beacon(){	
 		this.validKeys.add("add-incompatibility");
+		this.validKeys.add("add-url");
 	}
 	
 	private void checkModVersion() {
@@ -101,10 +108,34 @@ public class Beacon {
 		return true;
 	}
 
-	public void handleMessage(String key, String message) {
+	public void handleMessage(String sender, String key, String message) {
 		if(key.matches("add-incompatibility")){
-			mod_Beacon.instance.modIncompatibilities.add("");
+			modIncompatibilities.add(message);
+			mod_Beacon.log(sender + " added a mod incompatibility: " + message);
+		}else if(key.matches("add-url")){
+			Scanner scanner = new Scanner(message).useDelimiter(" ");
+			String modID = scanner.next();
+			String url = scanner.next();
+			modUrls.put(modID, url);
+			mod_Beacon.log(sender + " added a mod URL (" + url + ") with the mod ID: " + modID);
 		}
+	}
+	
+	public List<ModContainer> getModsCompatibleWithBeacon(){
+		List<ModContainer> list = new ArrayList<ModContainer>();
+		for(ModContainer modInstalled : Loader.instance().getActiveModList()){
+        	if(modInstalled.getModId().matches("mcp") || modInstalled.getModId().matches("FML") || modInstalled.getModId().matches("Forge")){ continue; }
+			
+			if(modUrls.containsKey(modInstalled.getModId())){
+				list.add(modInstalled);
+			}
+		}
+		
+		return list;
+	}
+	
+	public String getURLForMod(ModContainer mod){
+		return modUrls.get(mod.getModId());
 	}
 
 }

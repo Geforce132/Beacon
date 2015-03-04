@@ -12,11 +12,16 @@ import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
 
+import net.minecraft.command.WrongUsageException;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 
 import org.freeforums.geforce.beacon.gui.GuiCheckForMods;
+import org.freeforums.geforce.beacon.jsoup.Element;
+import org.freeforums.geforce.beacon.misc.ModNamingFormat;
 import org.freeforums.geforce.beacon.network.Links;
 import org.freeforums.geforce.beacon.network.ThreadDownloadFile;
 
@@ -71,36 +76,62 @@ public class HelpfulMethods {
 		return new URL("http://minecraft.curseforge.com/mc-mods/" + modid + "/files");
 	}
 	
-	public static void transferFile(String modName, String transferFrom, String transferTo) throws IOException{
-		FileInputStream from = new FileInputStream(transferFrom);
-		
-		File fileDirectory = new File(transferTo);
-		File fileToCreate = new File(transferTo + modName + (transferFrom.toLowerCase().endsWith(".jar") ? ".jar" : ".zip"));
-
-		//System.out.println("Creating dir: " + transferTo);
-		//System.out.println("Creating mod: " + transferTo + modName + (transferFrom.toLowerCase().endsWith(".jar") ? ".jar" : ".zip"));
-		if(!fileDirectory.exists()){
-			fileDirectory.mkdir();	
+	public static Object[] formatCFLink(String link, String modname){
+		for(ModNamingFormat format : ModNamingFormat.getNamingFormats()){
+			Object[] info = format.formatLink(link, modname);
+			if(info != null){
+				return info;
+			}
 		}
 		
-		if(!fileToCreate.exists()){
-			fileToCreate.createNewFile();
-			fileToCreate.setWritable(true);
+		return null;
+	}
+	
+	public static Element getDownloadLinkFromElement(List<Element> elements, String rawDLLink){
+		for(int i = 0; i < elements.size(); i++){
+			if(((Element) elements.toArray()[i]).attr("href").matches(rawDLLink.replace("/download", ""))){
+				return (Element) elements.toArray()[i];
+			}
 		}
 		
-		FileOutputStream to = new FileOutputStream(transferTo + modName + (transferFrom.toLowerCase().endsWith(".jar") ? ".jar" : ".zip"));
+		return null;
+	}
+	
+	public static String getPartOfString(String string, int index, String delimiter){
+		Scanner scanner = new Scanner(string).useDelimiter(delimiter);
 		
-		byte[] buffer = new byte[4094];
-		int byteRead;
-		
-		while((byteRead = from.read(buffer)) != -1){
-			to.write(buffer, 0, byteRead);
+		for(int i = 1; i < index; i++){
+			scanner.next();
 		}
 		
-		System.out.println("[Beacon] Transfered mod from " + transferFrom + " to " + transferTo + modName);
+		return scanner.next();
+	}
+	
+	/**
+	 * Compares the two versions given. 
+	 * 
+	 * @return -1 If str1 is less than str2. <br>
+	 *          0 If str1 matches str2. <br>
+	 *          1 If str1 is greater than str2.
+	 */
+	
+	@SuppressWarnings("unused")
+	public static Integer compareVersions(String str1, String str2) {
+		String[] vals1 = str1.split("\\.");
+		String[] vals2 = str2.split("\\.");
 		
-		from.close();
-		to.close();		
+		int i = 0;
+		
+		while(i < vals1.length && i < vals2.length && vals1[i].equals(vals2[i])){
+			i++;
+		}
+		
+		if(i < vals1.length && i < vals2.length){
+			int diff = Integer.valueOf(vals1[i]).compareTo(Integer.valueOf(vals2[i]));
+			return Integer.signum(diff);
+		}else{
+			return Integer.signum(vals1.length - vals2.length);
+		}
 	}
 	
 	public static void downloadMod(String url, String path, String modid, String modVersion, GuiCheckForMods screen) throws IOException{

@@ -3,17 +3,15 @@ package org.freeforums.geforce.beacon.main;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.Mod.Instance;
-import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.ModMetadata;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -36,29 +34,27 @@ public class mod_Beacon {
 	private static final String MOTU = "First!";
 	
 	//TODO ********************************* This is v1.0.7 for MC 1.8!
-	protected static final String VERSION = "v1.0.7";
+	protected static final String VERSION = "v1.5.5";
 	protected static final String FORGEVERSION = "required-after:Forge@[11.14.0.1252,)";
     public static final String MCVERSION = "1.8";
+    public static final boolean isDebugMode = true;
 	    
 	@Instance("beacon")
 	public static mod_Beacon instance = new mod_Beacon();
 	
-	public Beacon beacon;
+	public Beacon beacon = new Beacon();
 	
 	public static ForgeEventHandler eventHandler = new ForgeEventHandler();
 	public static ConfigurationHandler configHandler = new ConfigurationHandler();
 	
 	public ArrayList<String> missingMods = new ArrayList<String>();
-	public ArrayList<String> addedMods = new ArrayList<String>();
-	public ArrayList<String> modIncompatibilities = new ArrayList<String>();
-
+	
 	public static Configuration configFile;
 	public static String mcDirectory;
 	
 	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event){
-		beacon = new Beacon();
 		mod_Beacon.configFile = new Configuration(event.getSuggestedConfigurationFile());
 		this.configHandler.loadConfig(configFile);
 		
@@ -80,6 +76,7 @@ public class mod_Beacon {
         modMeta.url = "http://www.github.com/Geforce132/Beacon";
         
         FMLInterModComms.sendMessage("beacon", "add-incompatibility", "securitycraft 1.7.2");
+        FMLInterModComms.sendMessage("beacon", "add-url", "beacon C:/Users/Cyrell/Desktop/CFPage.htm");
 	}
 		
 	
@@ -90,8 +87,7 @@ public class mod_Beacon {
 	public void recieveMessages(IMCEvent event){
 		for(IMCMessage message : event.getMessages()){
 			if(message.isStringMessage() && beacon.validKeys.contains(message.key)){	
-				instance.beacon.handleMessage(message.key, message.getStringValue());
-				System.out.println(message.getSender() + ": '" + message.key + "' - " + message.getStringValue());
+				instance.beacon.handleMessage(message.getSender(), message.key, message.getStringValue());
 			}
 		}
 	}
@@ -99,17 +95,17 @@ public class mod_Beacon {
 	@EventHandler
 	public void postInit(FMLPostInitializationEvent event){
 		MinecraftForge.EVENT_BUS.register(mod_Beacon.eventHandler);
-
-		for(ModContainer mod : Loader.instance().getActiveModList()){
-			if(mod.getModId().matches("mcp") || mod.getModId().matches("FML") || mod.getModId().matches("Forge")){ continue; }
-			
-			System.out.println(mod.getName() + "(" + mod.getModId() + ") " + mod.getVersion());
-		}
 	}
 	
 	@NetworkCheckHandler
 	public boolean onConnectionReceived(Map<String,String> modList, Side side){
 		return beacon.onConnectionReceived(modList, side);
+	}
+	
+	public static void log(String par1){
+		if(isDebugMode){
+			System.out.println("[Beacon] " + par1);
+		}
 	}
 
 }

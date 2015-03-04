@@ -1,37 +1,37 @@
 package org.freeforums.geforce.beacon.gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.List;
+import java.util.Scanner;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiSlot;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.ModContainer;
 
+import org.freeforums.geforce.beacon.jsoup.Document;
+import org.freeforums.geforce.beacon.jsoup.Element;
+import org.freeforums.geforce.beacon.jsoup.Jsoup;
 import org.freeforums.geforce.beacon.main.HelpfulMethods;
 import org.freeforums.geforce.beacon.main.mod_Beacon;
-import org.freeforums.geforce.beacon.network.Links;
+import org.freeforums.geforce.beacon.misc.DownloadInfo;
 
 import com.google.common.collect.Lists;
 
 public class GuiCheckForMods extends GuiScreen {
 	
-	private GuiCheckForMods.List missingModsList;
 	private GuiScreen prevScreen;
-	private ArrayList<String> modsToRemove = new ArrayList<String>();
-	private boolean hasDownloadedMod;
-	private boolean downloadedAllMods = false;
-	private boolean hasInternetConnection = true;
-
-	public HashMap<String, Integer> downloads = new HashMap<String, Integer>();
+	private GuiUpdatesAvailableList guiUpdatesAvaliableList;
+	private GuiUpdatesSelectedList guiUpdatesSelectedList;
+	
+	private List<ModUpdateListEntry> updatesAvaliableList = Lists.newArrayList();
+	private List<ModUpdateListEntry> updatesSelectedList = Lists.newArrayList();
+    
+	private boolean field_175289_s = false;
 	
 	public GuiCheckForMods(GuiScreen par1){
 		this.prevScreen = par1;
@@ -39,187 +39,139 @@ public class GuiCheckForMods extends GuiScreen {
 	
 	public void initGui(){
 		super.initGui();
+
+        for(ModContainer modInstalled : mod_Beacon.instance.beacon.getModsCompatibleWithBeacon()){
+        	try{
+	        	File file = new File(new Scanner(mod_Beacon.instance.beacon.getURLForMod(modInstalled)).nextLine());
+	    		Document doc = Jsoup.parse(file, null);
+	    		List<Element> resultLinks = doc.select("a");
+	    		
+    	    	List<DownloadInfo> modDownloadLinks = new ArrayList<DownloadInfo>();
+
+	    	    for(Element link : resultLinks){
+	    	    	String href = link.attr("href");
+	    	    	if(href.endsWith("/download")){
+	    	    		Element element = HelpfulMethods.getDownloadLinkFromElement(resultLinks, link.attr("href"));
+	    	    		if(element != null){
+		    	    		modDownloadLinks.add(new DownloadInfo(element.text(), href));
+	    	    		}
+	    	    	}else{
+	    	    		continue;
+	    	    	}
+	    	    }
+	    	    	
+	    	    for(DownloadInfo link : modDownloadLinks){
+	    	    	Object[] info = HelpfulMethods.formatCFLink(link.modLinkName, "SecurityCraft");
+	    	    	if(info != null && ((String) info[2]).matches(Loader.MC_VERSION) && HelpfulMethods.compareVersions(modInstalled.getDisplayVersion().replaceFirst("v", ""), (String) info[1]) == -1){
+	    	    		this.updatesAvaliableList.add(new ModUpdateListEntry((String) info[0], modInstalled.getDisplayVersion().replaceFirst("v", "") + " -> " + info[3] + info[1], ((String) info[2]).matches("a") ? ModUpdateListEntry.ModTypes.ALPHA : ((String) info[2]).matches("b") ? ModUpdateListEntry.ModTypes.BETA : ModUpdateListEntry.ModTypes.RELEASE, this, mc));
+	    	    	}
+	    	    }
+        	}catch(IOException e){
+        		e.printStackTrace();
+        	}
+        	
+        	this.updatesAvaliableList.add(new ModUpdateListEntry(modInstalled.getName(), modInstalled.getVersion(), ModUpdateListEntry.ModTypes.BETA, this, mc));
+        }
         
-        this.hasInternetConnection = HelpfulMethods.hasInternetConnection();
-		
-		this.missingModsList = new GuiCheckForMods.List();
-        this.missingModsList.registerScrollButtons(7, 8);
+        //this.updatesAvaliableList.add(new ModUpdateListEntry("SecurityCraft", "v1.7.2", this, mc));
+        //this.updatesSelectedList.add(new ModUpdateListEntry("Teleportals", "v1.4", this, mc));
+
+        this.guiUpdatesAvaliableList = new GuiUpdatesAvailableList(this.mc, 200, this.height, this.updatesAvaliableList);
+        this.guiUpdatesAvaliableList.setSlotXBoundsFromLeft(this.width / 2 - 4 - 200);
+        this.guiUpdatesAvaliableList.registerScrollButtons(7, 8);
+        this.guiUpdatesSelectedList = new GuiUpdatesSelectedList(this.mc, 200, this.height, this.updatesSelectedList);
+        this.guiUpdatesSelectedList.setSlotXBoundsFromLeft(this.width / 2 + 4);
+        this.guiUpdatesSelectedList.registerScrollButtons(7, 8);
         
-		this.buttonList.add(new GuiUnicodeGlyphButton(0, 20, this.height - 25, 130, 20, "  Download all mods", "\u21A1\u21A1", 2.0F)); //21A7
+        this.buttonList.add(new GuiUnicodeGlyphButton(0, 20, this.height - 25, 130, 20, "  Download mods", "\u21A1\u21A1", 2.0F)); //21A7
 		this.buttonList.add(new GuiUnicodeGlyphButton(1, this.width - 60, this.height - 25, 40, 20, "Back", GuiUtils.UNDO_CHAR, 2.0F));
-		this.buttonList.add(new GuiUnicodeGlyphButton(2, 20, this.height - 55, 100, 20, "  Download mod", "\u21D9", 2.5F));
 		
-		((GuiButton) GuiCheckForMods.this.buttonList.get(2)).enabled = false;
 	}
 	
 	public void drawScreen(int par1, int par2, float par3){
-		this.drawDefaultBackground();
+		this.drawBackground(0);
 
-		this.missingModsList.drawScreen(par1, par2, par3);
+		this.guiUpdatesAvaliableList.drawScreen(par1, par2, par3);
+		this.guiUpdatesSelectedList.drawScreen(par1, par2, par3);
 		
 		this.drawCenteredString(fontRendererObj, "Beacon", this.width / 2, 20, 16777215);
-		
-		if(!hasInternetConnection){
-			this.drawString(fontRendererObj, "No internet connection detected!", 12, 5, 0xFF3377);
-			this.drawString(fontRendererObj, "Downloads are disabled.", 37, 20, 0xFF3377);
-		}
 		
 		super.drawScreen(par1, par2, par3);
 	}
 	
-	public void closeGui()
-    {
-		if(!downloadedAllMods){
-			for(String mod : modsToRemove){
-				mod_Beacon.instance.missingMods.remove(mod);
-			}
-		}else{
-			mod_Beacon.instance.missingMods.clear();
-		}
-        
-        Minecraft.getMinecraft().displayGuiScreen(new GuiRestart());
-        
-    }
-	
 	public void handleMouseInput() throws IOException
     {
         super.handleMouseInput();
-        this.missingModsList.handleMouseInput();
+        this.guiUpdatesAvaliableList.handleMouseInput();
+        this.guiUpdatesSelectedList.handleMouseInput();
+    }
+	
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException
+    {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        this.guiUpdatesAvaliableList.mouseClicked(mouseX, mouseY, mouseButton);
+        this.guiUpdatesSelectedList.mouseClicked(mouseX, mouseY, mouseButton);
     }
 	
 	protected void actionPerformed(GuiButton par1){
-		if(par1.id == 0){
-			
-			java.util.List<String> downloadedMods = HelpfulMethods.downloadMissingMods(mod_Beacon.instance.missingMods, this);
-			
-			for(int i = 0; i < downloadedMods.size(); i++){
-				mod_Beacon.instance.addedMods.add(downloadedMods.get(i));
-				modsToRemove.add(downloadedMods.get(i));
-			}
-
-			for(int i = 4; i < this.buttonList.size(); i++){
-				if(((GuiButton) this.buttonList.get(i)).enabled){
-					((GuiButton) this.buttonList.get(i)).enabled = false;
-				}
+		if(par1.id == 0){		
+			for(ModUpdateListEntry entry : updatesSelectedList){
+				System.out.println(entry.getEntryName() + " | " + entry.getEntryMetadata());
 			}
 			
-			downloadedAllMods = true;
-			par1.enabled = false;
+			
+			//List<String> downloadedMods = HelpfulMethods.downloadMissingMods(mod_Beacon.instance.missingMods, this);
+			
+			//for(int i = 0; i < downloadedMods.size(); i++){
+			//	mod_Beacon.instance.addedMods.add(downloadedMods.get(i));
+			//	modsToRemove.add(downloadedMods.get(i));
+			//}
+			
+			//downloadedAllMods = true;
+			//par1.enabled = false;
 		}else if(par1.id == 1){
-			if(hasDownloadedMod || downloadedAllMods){
-				this.closeGui();
-			}else{
+			//if(hasDownloadedMod || downloadedAllMods){
+			//	this.closeGui();
+			//}else{
 				this.mc.displayGuiScreen(prevScreen);
-			}
+			//}
 		}else if(par1.id == 2){
-			try{
-				if(HelpfulMethods.downloadMod(mod_Beacon.instance.missingMods.get(missingModsList.selectedEntry), this)){
-					modsToRemove.add(mod_Beacon.instance.missingMods.get(missingModsList.selectedEntry));
-					mod_Beacon.instance.addedMods.add(mod_Beacon.instance.missingMods.get(missingModsList.selectedEntry));
-					par1.enabled = false;
-					hasDownloadedMod = true;
-				}
-			}catch(IOException e){
-				e.printStackTrace();
-			}
+			//try{
+				//if(HelpfulMethods.downloadMod(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry), this)){
+				//	modsToRemove.add(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry));
+				//	mod_Beacon.instance.addedMods.add(mod_Beacon.instance.missingMods.get(outdatedModsList.selectedEntry));
+				//	par1.enabled = false;
+				//	hasDownloadedMod = true;
+				//}
+			//}catch(IOException e){
+			//	e.printStackTrace();
+			//}
 		}
 	}
 	
-	public void setModDownloading(String modid, double percentage){
-		this.downloads.put(modid, (int) percentage);
-		
-		if(this.downloads.get(modid) >= 100){
-			this.downloads.remove(modid);
-		}
-	}
-	
-	@SideOnly(Side.CLIENT)
-    class List extends GuiSlot
+	public boolean hasResourcePackEntry(ModUpdateListEntry par1)
     {
-        private final java.util.List list = Lists.newArrayList();
-        private final Map<Integer, String> numberToLink = new HashMap<Integer, String>();
-        private final Map<Integer, String> downloadType = new HashMap<Integer, String>();
+        return this.updatesSelectedList.contains(par1);
+    }
 
-        protected int selectedEntry = -1;
-
-        public List()
-        {
-            super(GuiCheckForMods.this.mc, GuiCheckForMods.this.width, GuiCheckForMods.this.height, 32, GuiCheckForMods.this.height - 65 + 4, 18);
-            Iterator iterator = mod_Beacon.instance.missingMods.iterator();
-            int counter = -1;
-            
-            while (iterator.hasNext())
-            {
-            	counter++;
-                String mod = (String)iterator.next();
-                
-                if(Links.hasWebLink(mod)){
-                	this.numberToLink.put(counter, Links.getLink(mod));
-                	this.downloadType.put(counter, "web");
-                }else{
-                	this.downloadType.put(counter, "none");
-                }
-                
-                this.list.add(mod);
-            }
-        }
-
-        protected int getSize()
-        {
-            return this.list.size();
-        }
-
-        /**
-         * The element in the slot that was clicked, boolean for whether it was double clicked or not
-         */
-        protected void elementClicked(int par1, boolean p_148144_2_, int p_148144_3_, int p_148144_4_)
-        {
-        	this.selectedEntry = par1;
-
-        	if(this.downloadType.get(par1).matches("web")){
-        		((GuiUnicodeGlyphButton) GuiCheckForMods.this.buttonList.get(2)).displayString = "Download mod";
-        		((GuiUnicodeGlyphButton) GuiCheckForMods.this.buttonList.get(2)).glyph = "\u21D9";
-        		((GuiUnicodeGlyphButton) GuiCheckForMods.this.buttonList.get(2)).glyphScale = 2.5F;
-        	}
-            
-            if(this.downloadType.get(par1).matches("none")){
-            	((GuiButton) GuiCheckForMods.this.buttonList.get(2)).enabled = false;
-            }else{
-            	((GuiButton) GuiCheckForMods.this.buttonList.get(2)).enabled = true;
-            }
-        }
-
-        /**
-         * Returns true if the element passed in is currently selected
-         */
-        protected boolean isSelected(int par1)
-        {
-        	return par1 == selectedEntry;
-        }
-
-        /**
-         * Return the height of the content being scrolled
-         */
-        protected int getContentHeight()
-        {
-            return this.getSize() * 18;
-        }
-
-        protected void drawBackground()
-        {
-        	GuiCheckForMods.this.drawDefaultBackground();
-        }
-
-        protected void drawSlot(int par1, int p_148126_2_, int p_148126_3_, int p_148126_4_, int p_148126_5_, int p_148126_6_)
-        {
-        	if(this.downloadType.get(par1).matches("none")){
-        		GuiCheckForMods.this.drawCenteredString(GuiCheckForMods.this.fontRendererObj, this.list.get(par1).toString(), this.width / 2, p_148126_3_ + 1, 0xFF3377); 
-        	}else if(downloads.containsKey(this.list.get(par1))){
-        		GuiCheckForMods.this.drawCenteredString(GuiCheckForMods.this.fontRendererObj, (this.list.get(par1).toString() + " (" + downloads.get(this.list.get(par1)) + "%)"), this.width / 2, p_148126_3_ + 1, 16777215);
-        	}else{
-        		GuiCheckForMods.this.drawCenteredString(GuiCheckForMods.this.fontRendererObj, this.list.get(par1).toString(), this.width / 2, p_148126_3_ + 1, 16777215);
-        	}
-        }
+    public List getListForEntry(ModUpdateListEntry par1)
+    {
+        return this.hasResourcePackEntry(par1) ? this.updatesSelectedList : this.updatesAvaliableList;
+    }
+    
+    public List getSelectedUpdatesList()
+    {
+        return this.updatesSelectedList;
+    }
+    
+    public List getAvaliableUpdatesList()
+    {
+        return this.updatesAvaliableList;
+    }
+    
+    public void func_175288_g()
+    {
+        this.field_175289_s = true;
     }
 
 }

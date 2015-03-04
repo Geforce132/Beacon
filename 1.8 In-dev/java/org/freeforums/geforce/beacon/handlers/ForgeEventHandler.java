@@ -45,11 +45,11 @@ public class ForgeEventHandler {
 	public void onButtonClicked(ActionPerformedEvent.Pre event){
 		if(event.gui instanceof GuiMainMenu && event.button.id == 7){
 			event.setCanceled(true);
-			if(!mod_Beacon.instance.missingMods.isEmpty()){
-				event.gui.mc.displayGuiScreen(new GuiCheckForMods(event.gui));
-			}else{
-				event.gui.mc.displayGuiScreen(new GuiMessage(event.gui, "Beacon has found no outdated or missing mods in your Minecraft installation.", "Back"));
-			}
+			//if(!mod_Beacon.instance.missingMods.isEmpty()){
+			event.gui.mc.displayGuiScreen(new GuiCheckForMods(event.gui));
+			//}else{
+			//	event.gui.mc.displayGuiScreen(new GuiMessage(event.gui, "Beacon has found no outdated or missing mods in your Minecraft installation.", "Back"));
+			//}
 			
 			event.gui.mc.getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 		}
