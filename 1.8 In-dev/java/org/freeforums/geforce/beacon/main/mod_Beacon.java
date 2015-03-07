@@ -34,7 +34,7 @@ public class mod_Beacon {
 	private static final String MOTU = "First!";
 	
 	//TODO ********************************* This is v1.0.7 for MC 1.8!
-	protected static final String VERSION = "v1.5.5";
+	protected static final String VERSION = "v1.0.7";
 	protected static final String FORGEVERSION = "required-after:Forge@[11.14.0.1252,)";
     public static final String MCVERSION = "1.8";
     public static final boolean isDebugMode = true;
@@ -74,8 +74,6 @@ public class mod_Beacon {
         modMeta.credits = "Thanks to Stack Overflow for help with code."; 
         modMeta.description = "Beacon adds the ability to download mods in-game. \nJoin your favorite servers without having to download every mod in your browser! \n \nMessage of the update: \n" + MOTU;
         modMeta.url = "http://www.github.com/Geforce132/Beacon";
-        
-        FMLInterModComms.sendMessage("beacon", "add-incompatibility", "securitycraft 1.7.2");
 	}
 		
 	

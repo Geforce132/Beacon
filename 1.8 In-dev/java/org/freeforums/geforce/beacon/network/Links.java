@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-
-import net.minecraftforge.fml.common.Loader;
 
 import org.freeforums.geforce.beacon.main.mod_Beacon;
 
@@ -32,6 +29,7 @@ public class Links {
 	
 			if(modInfo.size() == 2){ 
 				mod_Beacon.instance.beacon.modUrls.put(modInfo.get(0), modInfo.get(1));
+				mod_Beacon.log("Read URL " + modInfo.get(1) + " for mod" + modInfo.get(0));
 			}
 		}
 	}

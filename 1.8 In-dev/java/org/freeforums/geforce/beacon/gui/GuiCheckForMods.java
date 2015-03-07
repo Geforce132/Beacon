@@ -46,7 +46,14 @@ public class GuiCheckForMods extends GuiScreen {
 
         	try{
 	        	File file = new File(mod_Beacon.instance.beacon.getURLForMod(modInstalled));
-	    		Document doc = Jsoup.parse(file, null);
+	    		Document doc;
+	    		
+	    		if(mod_Beacon.instance.beacon.getURLForMod(modInstalled).startsWith("C:")){
+	    			doc = Jsoup.parse(file, null);
+	    		}else{
+	    			doc = Jsoup.connect("http://minecraft.curseforge.com/mc-mods/" + mod_Beacon.instance.beacon.getURLForMod(modInstalled) + "/files").userAgent("Beacon").post();
+	    		}
+	    				
 	    		List<Element> resultLinks = doc.select("a");
 	    		
 
@@ -73,7 +80,7 @@ public class GuiCheckForMods extends GuiScreen {
 	    	}
 	    }
     	
-    	this.updatesAvaliableList.add(new ModUpdateListEntry("beacon", "Beacon", "v1.0.5", "test", ModUpdateListEntry.ModTypes.BETA, this, mc));
+    	//this.updatesAvaliableList.add(new ModUpdateListEntry("beacon", "Beacon", "v1.0.5", "test", ModUpdateListEntry.ModTypes.BETA, this, mc));
         
         this.guiUpdatesAvaliableList = new GuiUpdatesAvailableList(this.mc, 200, this.height, this.updatesAvaliableList);
         this.guiUpdatesAvaliableList.setSlotXBoundsFromLeft(this.width / 2 - 4 - 200);

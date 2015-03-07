@@ -113,11 +113,9 @@ public class Beacon {
 			modIncompatibilities.add(message);
 			mod_Beacon.log(sender + " added a mod incompatibility: " + message);
 		}else if(key.matches("add-url")){
-			Scanner scanner = new Scanner(message).useDelimiter(" ");
-			String modID = scanner.next();
-			String url = scanner.next();
-			modUrls.put(modID, url);
-			mod_Beacon.log(sender + " added a mod URL (" + url + ") with the mod ID: " + modID);
+			String url = message;
+			modUrls.put(sender, url);
+			mod_Beacon.log(sender + " added a mod URL (" + url + ") with the mod ID: " + sender);
 		}
 	}
 	
