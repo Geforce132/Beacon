@@ -13,6 +13,6 @@ woodconverter v2.7_1~1.7.10~http://download1029.mediafire.com/p8kpx2p709xg/p2v85
 woodconverter v2.8~1.7.10~http://download1389.mediafire.com/hvp15asmrycg/52qq3e1dx00aj57/%5B1.8%5DWood+Converter+v2.8.jar
 steamcraft2 Beta R4.1~1.7.10~http://minecraft.curseforge.com/mc-mods/224017-steamcraft-2-beta-2-fluxian-storm/files/2230088
 boilerplate 4.0.1~1.7.10~http://minecraft.curseforge.com/mc-mods/224018-boilerplate/files/2230264
-
+Botania r1.6-174~1.7.10~http://minecraft.curseforge.com/mc-mods/225643-botania/files/2232641
 
 
